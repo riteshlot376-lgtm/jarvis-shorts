@@ -1,21 +1,45 @@
 import os
-import google.generativeai as genai
+import requests
+import json
 
-# 1. गिटहब के सीक्रेट से की उठाना
+# 1. सीक्रेट से की उठाना
 api_key = os.environ.get("GEMINI_API_KEY")
 
 if not api_key:
     print("एरर: GEMINI_API_KEY नहीं मिली!")
     exit(1)
 
-# 2. जेमिनी को सेट करना
-genai.configure(api_key=api_key)
+print("--- Jarvis Shorts Autopilot नए तरीके से शुरू हो गया है ---")
 
-# 3. हिंदी में वायरल शॉर्ट्स का टाइटल और डिस्क्रिप्शन जनरेट करना
-model = genai.GenerativeModel('gemini-1.5-flash')
-prompt = "विज्ञान के किसी बहुत ही रोचक और चौका देने वाले रहस्य पर एक YouTube Short के लिए आकर्षक हिंदी टाइटल, शानदार डिस्क्रिप्शन और वायरल हैशटैग लिखो।"
+# 2. सीधा गूगल के API सर्वर पर रिक्वेस्ट भेजना (बिना किसी भारी लाइब्रेरी के)
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
 
-response = model.generate_content(prompt)
+headers = {
+    "Content-Type": "application/json"
+}
 
-print("--- हिंदी में फाइनल रिजल्ट आ गया है ---")
-print(response.text)
+payload = {
+    "contents": [{
+        "parts": [{
+            "text": "विज्ञान के किसी बहुत ही रोचक और चौका देने वाले रहस्य पर एक YouTube Short के लिए आकर्षक हिंदी टाइटल, शानदार डिस्क्रिप्शन और वायरल हैशटैग लिखो।"
+        }]
+    }]
+}
+
+try:
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+    
+    if response.status_code == 200:
+        res_data = response.json()
+        output_text = res_data['candidates'][0]['content']['parts'][0]['text']
+        print("\n[सफलता! हिंदी में फाइनल रिजल्ट]:")
+        print(output_text)
+        print("\n--- काम सफलतापूर्वक पूरा हो गया है! ---")
+    else:
+        print(f"API एरर आया है: {response.status_code}")
+        print(response.text)
+        exit(1)
+
+except Exception as e:
+    print(f"कनेक्शन में दिक्कत आई: {e}")
+    exit(1)
