@@ -1,28 +1,21 @@
 import os
 import google.generativeai as genai
 
-# 1. GitHub Secrets से API Key लेना
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+# 1. गिटहब के सीक्रेट से की उठाना
+api_key = os.environ.get("GEMINI_API_KEY")
 
-print("--- Jarvis Shorts Autopilot शुरू हो गया है ---")
-
-if not GEMINI_API_KEY:
+if not api_key:
     print("एरर: GEMINI_API_KEY नहीं मिली!")
     exit(1)
 
-try:
-    # 2. सही और स्टेबल मॉडल कॉन्फिगर करना
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+# 2. जेमिनी को सेट करना
+genai.configure(api_key=api_key)
 
-    # 3. कंटेंट जनरेट करना
-    prompt = "Write a catchy YouTube Short title and description about a cool science fact."
-    response = model.generate_content(prompt)
-    
-    print("\n[AI जनरेटेड मेटाडाटा]:")
-    print(response.text)
-    print("\n--- स्क्रिप्ट सफलतापूर्वक पूरी हो गई है! ---")
+# 3. हिंदी में वायरल शॉर्ट्स का टाइटल और डिस्क्रिप्शन जनरेट करना
+model = genai.GenerativeModel('gemini-1.5-flash')
+prompt = "विज्ञान के किसी बहुत ही रोचक और चौका देने वाले रहस्य पर एक YouTube Short के लिए आकर्षक हिंदी टाइटल, शानदार डिस्क्रिप्शन और वायरल हैशटैग लिखो।"
 
-except Exception as e:
-    print(f"कनेक्शन में दिक्कत आई: {e}")
-    exit(1)
+response = model.generate_content(prompt)
+
+print("--- हिंदी में फाइनल रिजल्ट आ गया है ---")
+print(response.text)
