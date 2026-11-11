@@ -25,8 +25,8 @@ jobs:
 
       - name: Run Jarvis Autopilot Script
         env:
-          GEMINI_API_KEY: "AQ.Ab8RN6L4er2YVyRDjVK6zBhisHjtBI7MAFtwb8blGfrqLo2WgA"
-          ELEVENLABS_API_KEY: "sk_f1916e0ae7ad6f9d6d62769fb8ce23517fd242a1aba6fae6"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
         run: |
           python main.py
